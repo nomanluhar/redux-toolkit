@@ -1,57 +1,31 @@
-import { createSlice, createAsyncThunk } from "@reduxjs/toolkit";
-import { logDetails } from "./logSlice";
-
-// Email: eve.holt@reqres.in
-// Password: cityslicka
+// src/features/users/userSlice.js
+import { createSlice } from '@reduxjs/toolkit';
 
 const initialState = {
-  user: null,
-  token: null,
-  status: "idle", // 'idle' | 'loading' | 'succeeded' | 'failed'
+  users: [],
+  loading: false,
   error: null,
 };
 
-export const login = createAsyncThunk(
-  "auth/login",
-  async ({ email, password }, thunkAPI) => {
-    const response = await fetch("https://reqres.in/api/login", {
-      method: "POST",
-      headers: {
-        "Content-Type": "application/json",
-      },
-      body: JSON.stringify({ email, password }),
-    });
-    const data = await response.json();
-    console.log({ data });
-    if (!response.ok) {
-      return thunkAPI.rejectWithValue(data);
-    }
-    // Dispatch logDetails action on successful login
-    thunkAPI.dispatch(logDetails({ email, message: "Login successful" }));
-
-    return data;
-  }
-);
-
-const authSlice = createSlice({
-  name: "auth",
+const userSlice = createSlice({
+  name: 'users',
   initialState,
-  reducers: {},
-  extraReducers: (builder) => {
-    builder
-      .addCase(login.pending, (state) => {
-        state.status = "loading";
-      })
-      .addCase(login.fulfilled, (state, action) => {
-        state.status = "succeeded";
-        state.token = action.payload.token;
-        state.error = null;
-      })
-      .addCase(login.rejected, (state, action) => {
-        state.status = "failed";
-        state.error = action.payload.error;
-      });
+  reducers: {
+    fetchUsersStart: (state) => {
+      state.loading = true;
+      state.error = null;
+    },
+    fetchUsersSuccess: (state, action) => {
+      state.loading = false;
+      state.users = action.payload;
+    },
+    fetchUsersFailure: (state, action) => {
+      state.loading = false;
+      state.error = action.payload;
+    },
   },
 });
 
-export default authSlice.reducer;
+export const { fetchUsersStart, fetchUsersSuccess, fetchUsersFailure } = userSlice.actions;
+
+export default userSlice.reducer;

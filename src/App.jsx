@@ -3,6 +3,7 @@ import "./App.css";
 import AddTodo from "./components/AddTodo";
 import Todos from "./components/Todos";
 import Login from "./components/Login";
+import UserList from "./components/UserList";
 
 function App() {
   const [example, setExample] = useState("toolkit");
@@ -44,6 +45,8 @@ function App() {
         </>
       ) : example == "thunk" ? (
         <Login />
+      ) : example == "saga" ? (
+        <UserList />
       ) : (
         <> </>
       )}
